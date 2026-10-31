@@ -1,0 +1,49 @@
+{
+  "name": "autoevolve-protocol",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "typecheck": "turbo run typecheck",
+    "test:phase0": "tsx benchmark/verify-phase0.ts",
+    "test:phase1": "vitest run AutoEvolve_Test_Suite/AutoEvolve_Test_Suite/scoring.biasfree.test.ts",
+    "test:phase2": "vitest run apps/worker/src/agentic.test.ts",
+    "test:phase3": "vitest run AutoEvolve_Test_Suite/AutoEvolve_Test_Suite/circuit.biasfree.test.ts",
+    "test:phase4": "hardhat test AutoEvolve_Test_Suite/AutoEvolve_Test_Suite/contracts.biasfree.test.ts",
+    "test:phase5": "vitest run AutoEvolve_Test_Suite/AutoEvolve_Test_Suite/ipfs.memory.biasfree.test.ts",
+    "test:all": "vitest run AutoEvolve_Test_Suite/AutoEvolve_Test_Suite/scoring.biasfree.test.ts AutoEvolve_Test_Suite/AutoEvolve_Test_Suite/circuit.biasfree.test.ts AutoEvolve_Test_Suite/AutoEvolve_Test_Suite/ipfs.memory.biasfree.test.ts",
+    "bench:run": "tsx benchmark/run.ts",
+    "zk:build": "bash packages/zk/scripts/build.sh",
+    "zk:verify": "tsx packages/zk/scripts/verify.ts",
+    "contracts:compile": "hardhat compile",
+    "contracts:deploy": "hardhat run packages/contracts/scripts/deploy.ts --network baseSepolia",
+    "contracts:deploy:local": "hardhat run packages/contracts/scripts/deploy.ts --network localhost",
+    "chain:node": "hardhat node",
+    "demo:clean": "tsx scripts/demo.ts",
+    "worker": "tsx apps/worker/src/index.ts",
+    "web": "pnpm --filter @autoevolve/web dev"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.1.0",
+    "@types/diff": "^5.2.3",
+    "@types/node": "^22.10.2",
+    "chai": "^4.5.0",
+    "diff": "^7.0.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.17",
+    "snarkjs": "^0.7.5",
+    "tsx": "^4.19.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "viem": "^2.21.54",
+    "vitest": "^2.1.8",
+    "zod": "^3.24.1"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "taskId": "csv-importer-v1",
+  "title": "CSV Transaction Importer",
+  "description": "Build a Python function parse_transactions(csv_path) that returns list of valid transactions. Must validate ISO date YYYY-MM-DD, detect duplicates by transaction_id, skip malformed rows with warning, return only valid.",
+  "requirements": [
+    "def parse_transactions(csv_path: str) -> List[Dict]",
+    "validate date",
+    "dedup",
+    "handle malformed"
+  ],
+  "rubricDigest": "sha256-placeholder-will-be-computed",
+  "bannedImports": [
+    "os",
+    "subprocess",
+    "socket",
+    "shutil",
+    "sys"
+  ],
+  "timeoutSec": 5
+}

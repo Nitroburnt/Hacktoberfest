@@ -1,0 +1,313 @@
+{
+  "id": "run-mvvj61ah-d40d9a97",
+  "taskId": "csv-importer-v1",
+  "taskDigest": "40228af49733c33ecb6d761f223eb49c9d37251ecca07da41e0dd9892364ed99",
+  "rubricDigest": "4c159187d9d875d5cb35fa6f64b8a5faac60b24954eafe8f0517807edcce1936",
+  "status": "done",
+  "models": {
+    "generator": "Qwen/Qwen2.5-Coder-32B-Instruct",
+    "critic": "deepseek-ai/DeepSeek-R1"
+  },
+  "versions": [
+    {
+      "version": "V1",
+      "code": "import csv\ndef parse_transactions(csv_path):\n    result=[]\n    with open(csv_path) as f:\n        reader=csv.DictReader(f)\n        for row in reader:\n            # BUG: no date validation, no dedup, crashes on malformed\n            result.append(row)\n    return result\n",
+      "codeHash": "1d93f084ed2c74b7a1a7de95064d7c6b81f867dc0d9c53ad82ef70d434afeddc",
+      "score": {
+        "functional": 6,
+        "edge": 2,
+        "static": 2,
+        "safety": true,
+        "total": 56,
+        "failureIds": [
+          "test_e01_duplicate_keeps_first_record",
+          "test_e02_non_iso_date_is_skipped",
+          "test_e04_whitespace_is_normalized",
+          "test_f03_duplicate_id_is_dropped",
+          "test_f04_invalid_iso_date_is_skipped",
+          "test_f05_missing_date_is_skipped",
+          "test_f06_missing_transaction_id_is_skipped"
+        ]
+      },
+      "inheritedLessons": [
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn"
+      ],
+      "latencyMs": 1256
+    },
+    {
+      "version": "V2",
+      "code": "import csv\nfrom datetime import datetime\n\ndef parse_transactions(csv_path):\n    result=[]\n    seen=set()\n    with open(csv_path) as f:\n        reader=csv.DictReader(f)\n        for row in reader:\n            try:\n                tid=row.get('transaction_id')\n                if not tid or tid in seen:\n                    continue\n                # date validation\n                datetime.strptime(row['date'], '%Y-%m-%d')\n                seen.add(tid)\n                result.append(row)\n            except:\n                continue\n    return result\n",
+      "codeHash": "b92e1259eb0ef0504496a6b63774ca09f7d4d362c20b18cca8b0ef6d3b854c2e",
+      "score": {
+        "functional": 10,
+        "edge": 4,
+        "static": 0,
+        "safety": true,
+        "total": 92,
+        "failureIds": [
+          "test_e04_whitespace_is_normalized"
+        ]
+      },
+      "changelog": "V2 change: +13 / -2 (2 changed lines)\n\n@@ -1,9 +1,20 @@\n import csv\n+from datetime import datetime\n+\n def parse_transactions(csv_path):\n     result=[]\n+    seen=set()\n     with open(csv_path) as f:\n         reader=csv.DictReader(f)\n         for row in reader:\n-            # BUG: no date validation, no dedup, crashes on malformed\n-            result.append(row)\n+            try:\n+                tid=row.get('transaction_id')\n+                if not tid or tid in seen:\n+                    continue\n+                # date validation\n+                datetime.strptime(row['date'], '%Y-%m-%d')\n+                seen.add(tid)\n+                result.append(row)\n+            except:\n+                continue\n     return result",
+      "diffAdded": 13,
+      "diffRemoved": 2,
+      "inheritedLessons": [
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn"
+      ],
+      "latencyMs": 1088
+    },
+    {
+      "version": "V3",
+      "code": "import csv\nfrom datetime import datetime\nimport warnings\n\ndef parse_transactions(csv_path):\n    result=[]\n    seen=set()\n    with open(csv_path) as f:\n        reader=csv.DictReader(f)\n        for idx, row in enumerate(reader, start=2):\n            try:\n                tid=row.get('transaction_id','').strip()\n                if not tid:\n                    warnings.warn(f\"Row {idx} missing id, skipped\")\n                    continue\n                if tid in seen:\n                    continue\n                date_str=row.get('date','').strip()\n                datetime.strptime(date_str, '%Y-%m-%d')  # ISO validation\n                # additional: amount must be numeric\n                float(row.get('amount','0'))\n                seen.add(tid)\n                result.append({k:v.strip() if isinstance(v,str) else v for k,v in row.items()})\n            except Exception as e:\n                warnings.warn(f\"Row {idx} malformed: {e}\")\n                continue\n    return result\n",
+      "codeHash": "231be85eb0b2e9f90e0d1e7da8750b24049ad7f9648ec1385fe697c2cc62c23f",
+      "score": {
+        "functional": 10,
+        "edge": 5,
+        "static": 2,
+        "safety": true,
+        "total": 97,
+        "failureIds": []
+      },
+      "changelog": "V3 change: +14 / -7 (7 changed lines)\n\n@@ -1,20 +1,27 @@\n import csv\n from datetime import datetime\n+import warnings\n \n def parse_transactions(csv_path):\n     result=[]\n     seen=set()\n     with open(csv_path) as f:\n         reader=csv.DictReader(f)\n-        for row in reader:\n+        for idx, row in enumerate(reader, start=2):\n             try:\n-                tid=row.get('transaction_id')\n-                if not tid or tid in seen:\n+                tid=row.get('transaction_id','').strip()\n+                if not tid:\n+                    warnings.warn(f\"Row {idx} missing id, skipped\")\n                     continue\n-                # date validation\n-                datetime.strptime(row['date'], '%Y-%m-%d')\n+                if tid in seen:\n+                    continue\n+                date_str=row.get('date','').strip()\n+                datetime.strptime(date_str, '%Y-%m-%d')  # ISO validation\n+                # additional: amount must be numeric\n+                float(row.get('amount','0'))\n                 seen.add(tid)\n-                result.append(row)\n-            except:\n+                result.append({k:v.strip() if isinstance(v,str) else v for k,v in row.items()})\n+            except Exception as e:\n+                warnings.warn(f\"Row {idx} malformed: {e}\")\n                 continue\n     return result",
+      "diffAdded": 14,
+      "diffRemoved": 7,
+      "inheritedLessons": [
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn"
+      ],
+      "latencyMs": 1003
+    }
+  ],
+  "critiques": [
+    {
+      "forVersion": "V1",
+      "critique": {
+        "defect": "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized",
+        "evidence": "failure ids: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized",
+        "severity": "high",
+        "suggested_change": "strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "confidence": 0.9
+      },
+      "latencyMs": 0
+    },
+    {
+      "forVersion": "V2",
+      "critique": {
+        "defect": "failing behaviours: test_e04_whitespace_is_normalized",
+        "evidence": "failure ids: test_e04_whitespace_is_normalized",
+        "severity": "med",
+        "suggested_change": "strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+        "confidence": 0.9
+      },
+      "latencyMs": 0
+    }
+  ],
+  "proofs": [
+    {
+      "transitionId": "99ac1f9aabd5850ccb0cc026886aec7c",
+      "fromVersion": "V1",
+      "toVersion": "V2",
+      "oldScore": 56,
+      "newScore": 92,
+      "circuit": "packages/zk/circuits/improvement.circom",
+      "publicSignals": [
+        "56",
+        "92",
+        "4315714423566969663247614901576566015937134225491617491394793382592855045853",
+        "13378459130250638791533707961421490034400975361238085934774311313306295463388",
+        "18094549992990291445083808387616885475572499324112142042116107611570576903211",
+        "1",
+        "3088692382370306240338407763722266934532005583787873864173093896692646668628"
+      ],
+      "proof": {
+        "pi_a": [
+          "21793531119993778920324932977947691019984599330555638048033751780706759669404",
+          "15062051502263107688298516565687812431922883968983172193204859771486075912572",
+          "1"
+        ],
+        "pi_b": [
+          [
+            "2619525850177771807547282519714003118620195475936831321630441823583269953361",
+            "4067178199330221012966147593333920084549836765444098126310519606622975251638"
+          ],
+          [
+            "3516402125463202121278284348008518645898496529756943618811250365731426883973",
+            "14275412051851107092653510257088851764812154736300556903499020611180716222328"
+          ],
+          [
+            "1",
+            "0"
+          ]
+        ],
+        "pi_c": [
+          "837057313662206298140613222061318354545729110235120958222845200467580547132",
+          "3606822589030730347478958480877612067378921570231667422593019531449639022280",
+          "1"
+        ],
+        "protocol": "groth16",
+        "curve": "bn128"
+      },
+      "localVerified": true,
+      "onChainVerified": false,
+      "provingMs": 709
+    },
+    {
+      "transitionId": "675db3a839d36c6600c1e5feb6b99acf",
+      "fromVersion": "V2",
+      "toVersion": "V3",
+      "oldScore": 92,
+      "newScore": 97,
+      "circuit": "packages/zk/circuits/improvement.circom",
+      "publicSignals": [
+        "92",
+        "97",
+        "4315714423566969663247614901576566015937134225491617491394793382592855045853",
+        "18094549992990291445083808387616885475572499324112142042116107611570576903211",
+        "15880258329159346359297958746726168238565756774059826885431027153989760369215",
+        "1",
+        "3088692382370306240338407763722266934532005583787873864173093896692646668628"
+      ],
+      "proof": {
+        "pi_a": [
+          "2403063060336220723131002076510855197965667344614754061050889848764699138808",
+          "21025346225122629342577273598556526525095354202112067233755375349938891735106",
+          "1"
+        ],
+        "pi_b": [
+          [
+            "2152363680840785181124796313284587138287717282512602058401618212052166813434",
+            "15972976197018940152422732207201626705485815364101831012877928428005393013230"
+          ],
+          [
+            "14295290643735260095589311599228553882783340396699259736404341116735886660215",
+            "15630880606536369923982877310844944841606588736049675845732581059133321379515"
+          ],
+          [
+            "1",
+            "0"
+          ]
+        ],
+        "pi_c": [
+          "19291699047780207568815673454463265617430325086331340999771157865354488858901",
+          "20317817006015785326927501580222250300811276234910090787306501552003232567756",
+          "1"
+        ],
+        "protocol": "groth16",
+        "curve": "bn128"
+      },
+      "localVerified": true,
+      "onChainVerified": true,
+      "provingMs": 80
+    }
+  ],
+  "publication": {
+    "cid": "baguqeeramccqq2a4lmpoq3sbraxrhdyobm7fou6fmdvpxgovpx44hyvxxewa",
+    "gatewayUrl": "http://localhost:8787/api/ipfs/baguqeeramccqq2a4lmpoq3sbraxrhdyobm7fou6fmdvpxgovpx44hyvxxewa",
+    "manifestCommitment": "3088692382370306240338407763722266934532005583787873864173093896692646668628",
+    "provider": "local"
+  },
+  "settlement": {
+    "chainId": 84532,
+    "txHash": "0xd331c35adff55013a21a0e47738ed26ec88d7093b3dff9f1075687c7db7c50dd",
+    "explorerUrl": "http://127.0.0.1:8545/tx/0xd331c35adff55013a21a0e47738ed26ec88d7093b3dff9f1075687c7db7c50dd",
+    "rewardWei": "100000000000000",
+    "contractAddress": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+  },
+  "memory": {
+    "inheritedFrom": [
+      "baguqeerajva6rxwdoyzvq63mwzztmlzokscb2wlx4nzchmxzc4g3ideznslq",
+      "baguqeeramdefpyx5dju6jxbxzsx2udzdykbtgzjgay5zomw7jrbr7nm6xacq",
+      "baguqeerawlwckb4dhhe3fc3qqrr2i37abdslfq6yo5thoknq354tk6fw3lmq"
+    ],
+    "lessons": [
+      "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+      "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+      "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn"
+    ],
+    "reusedBadge": true
+  },
+  "usage": {
+    "promptTokens": 2141,
+    "completionTokens": 645,
+    "costUsd": 0
+  },
+  "stages": [
+    {
+      "stage": "memory",
+      "at": "2026-10-30T22:15:08.304Z",
+      "latencyMs": 0,
+      "detail": "retrieving published lessons"
+    },
+    {
+      "stage": "generating V1",
+      "at": "2026-10-30T22:15:09.849Z",
+      "latencyMs": 1545
+    },
+    {
+      "stage": "evaluating V1",
+      "at": "2026-10-30T22:15:09.853Z",
+      "latencyMs": 1549
+    },
+    {
+      "stage": "critiquing V1",
+      "at": "2026-10-30T22:15:11.119Z",
+      "latencyMs": 2815
+    },
+    {
+      "stage": "generating V2",
+      "at": "2026-10-30T22:15:11.124Z",
+      "latencyMs": 2820
+    },
+    {
+      "stage": "evaluating V2",
+      "at": "2026-10-30T22:15:11.128Z",
+      "latencyMs": 2824
+    },
+    {
+      "stage": "critiquing V2",
+      "at": "2026-10-30T22:15:12.225Z",
+      "latencyMs": 3921
+    },
+    {
+      "stage": "generating V3",
+      "at": "2026-10-30T22:15:12.233Z",
+      "latencyMs": 3929
+    },
+    {
+      "stage": "evaluating V3",
+      "at": "2026-10-30T22:15:12.237Z",
+      "latencyMs": 3933
+    },
+    {
+      "stage": "proving",
+      "at": "2026-10-30T22:15:13.285Z",
+      "latencyMs": 4981,
+      "detail": "3 evaluated version(s)"
+    },
+    {
+      "stage": "publishing",
+      "at": "2026-10-30T22:15:14.512Z",
+      "latencyMs": 6208,
+      "detail": "manifest for 3 version(s)"
+    },
+    {
+      "stage": "settling",
+      "at": "2026-10-30T22:15:14.523Z",
+      "latencyMs": 6219,
+      "detail": "registry submit 675db3a839d36c6600c1e5feb6b99acf"
+    },
+    {
+      "stage": "done",
+      "at": "2026-10-30T22:15:14.647Z",
+      "latencyMs": 6343
+    }
+  ],
+  "error": null,
+  "createdAt": "2026-10-30T22:15:08.297Z",
+  "updatedAt": "2026-10-30T22:15:14.647Z"
+}

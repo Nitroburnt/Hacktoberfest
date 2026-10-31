@@ -1,0 +1,11 @@
+{
+  "rubricVersion": "1.0.0",
+  "rubricDigest": "4c159187d9d875d5cb35fa6f64b8a5faac60b24954eafe8f0517807edcce1936",
+  "taskId": "csv-importer-v1",
+  "taskDigest": "40228af49733c33ecb6d761f223eb49c9d37251ecca07da41e0dd9892364ed99",
+  "benchmarkDigest": "fb8023d73e4d57169224cb50dc379bc62628b5ceca1f0fcef4b6eae14fe276e2",
+  "testFiles": [
+    "benchmark/tests/conftest.py"
+  ],
+  "frozenAt": "2026-10-30T18:16:07.146Z"
+}

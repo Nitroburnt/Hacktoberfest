@@ -1,0 +1,100 @@
+{
+  "at": "2026-10-30T22:15:18.244Z",
+  "runs": [
+    {
+      "runId": "run-mvvj61ah-d40d9a97",
+      "status": "done",
+      "scores": [
+        "V1=56",
+        "V2=92",
+        "V3=97"
+      ],
+      "proofs": [
+        "V1->V2:56->92(709ms,verified)",
+        "V2->V3:92->97(80ms,verified)"
+      ],
+      "cid": "baguqeeramccqq2a4lmpoq3sbraxrhdyobm7fou6fmdvpxgovpx44hyvxxewa",
+      "provider": "local",
+      "tx": "0xd331c35adff55013a21a0e47738ed26ec88d7093b3dff9f1075687c7db7c50dd",
+      "memory": {
+        "inheritedFrom": [
+          "baguqeerajva6rxwdoyzvq63mwzztmlzokscb2wlx4nzchmxzc4g3ideznslq",
+          "baguqeeramdefpyx5dju6jxbxzsx2udzdykbtgzjgay5zomw7jrbr7nm6xacq",
+          "baguqeerawlwckb4dhhe3fc3qqrr2i37abdslfq6yo5thoknq354tk6fw3lmq"
+        ],
+        "lessons": [
+          "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+          "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+          "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn"
+        ],
+        "reusedBadge": true
+      },
+      "usage": {
+        "promptTokens": 2141,
+        "completionTokens": 645,
+        "costUsd": 0
+      },
+      "error": null
+    },
+    {
+      "runId": "run-mvvj666z-f8565cf2",
+      "status": "done",
+      "scores": [
+        "V1=56",
+        "V2=92",
+        "V3=97"
+      ],
+      "proofs": [
+        "V1->V2:56->92(90ms,verified)",
+        "V2->V3:92->97(71ms,verified)"
+      ],
+      "cid": "baguqeerahg6xuzaqhwap5arvba4ysa3lei76gueqyrunrpytevbbeukolz3q",
+      "provider": "local",
+      "tx": "0x5610d0c812115dd1d12d0ab7052dbd690806fa020f34c021161c5c5e434cdd6c",
+      "memory": {
+        "inheritedFrom": [
+          "baguqeeramccqq2a4lmpoq3sbraxrhdyobm7fou6fmdvpxgovpx44hyvxxewa",
+          "baguqeerajva6rxwdoyzvq63mwzztmlzokscb2wlx4nzchmxzc4g3ideznslq",
+          "baguqeeramdefpyx5dju6jxbxzsx2udzdykbtgzjgay5zomw7jrbr7nm6xacq"
+        ],
+        "lessons": [
+          "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+          "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+          "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn"
+        ],
+        "reusedBadge": true
+      },
+      "usage": {
+        "promptTokens": 2141,
+        "completionTokens": 645,
+        "costUsd": 0
+      },
+      "error": null
+    }
+  ],
+  "localRuns": 10,
+  "totals": {
+    "provingMs": 789,
+    "wallClockMs": 6343,
+    "costUsd": 0,
+    "proofs": 4
+  },
+  "inheritedLessons": [
+    {
+      "cid": "baguqeeramccqq2a4lmpoq3sbraxrhdyobm7fou6fmdvpxgovpx44hyvxxewa",
+      "lesson": "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+      "similarity": 0.575
+    },
+    {
+      "cid": "baguqeerahg6xuzaqhwap5arvba4ysa3lei76gueqyrunrpytevbbeukolz3q",
+      "lesson": "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+      "similarity": 0.575
+    },
+    {
+      "cid": "baguqeerajva6rxwdoyzvq63mwzztmlzokscb2wlx4nzchmxzc4g3ideznslq",
+      "lesson": "failing behaviours: test_e01_duplicate_keeps_first_record, test_e02_non_iso_date_is_skipped, test_e04_whitespace_is_normalized — strip whitespace, validate dates with datetime.strptime, deduplicate by transaction_id and skip malformed rows with warnings.warn",
+      "similarity": 0.575
+    }
+  ],
+  "claim": "AutoEvolve records each version and its benchmark evidence, proves that the published integer score increased under a fixed rubric, and settles a testnet reward. The proof hides the private metric witness; the public memory omits system prompts. We do NOT claim proof of LLM inference."
+}

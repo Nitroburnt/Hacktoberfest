@@ -1,0 +1,35 @@
+node_modules/
+.next/
+dist/
+turbo/
+.turbo/
+*.tsbuildinfo
+
+# secrets / wallets
+.env
+.env.*
+!.env.example
+*.key
+wallet*.json
+keystore/
+
+# zk large intermediates (final zkey, wasm and verifier ARE committed)
+*.ptau
+packages/zk/build/*_0000.zkey
+packages/zk/build/*_0001.zkey
+packages/zk/build/*.wtns
+packages/zk/build/*.r1cs
+packages/zk/build/*.sym
+
+# tooling / runtime
+.tools/
+.data/
+typechain-types/
+artifacts/
+cache/
+hardhat-cache/
+*.log
+apps/worker/data/*.sqlite
+apps/worker/data/*.sqlite-journal
+benchmark/results/*.json
+!benchmark/results/.gitkeep

@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "formula": "total = functional*8 + edge*3 + static",
+  "functionalTests": 10,
+  "edgeTests": 5,
+  "staticMax": 5,
+  "maxScore": 100,
+  "safetyGate": {
+    "bannedImports": [
+      "os",
+      "subprocess",
+      "socket"
+    ],
+    "timeoutSec": 5
+  }
+}

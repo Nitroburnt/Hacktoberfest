@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #07090d;
+  color: #e2e8f0;
+}
+
+body {
+  font-feature-settings: 'ss01' on;
+}
+
+::selection {
+  background: rgba(94, 234, 212, 0.25);
+}
+
+.panel {
+  @apply rounded-xl border border-edge bg-panel/80;
+}
+
+.panel-title {
+  @apply text-xs font-semibold uppercase tracking-[0.16em] text-slate-400;
+}
+
+.chip {
+  @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium;
+}
+
+.mono {
+  @apply font-mono text-[12px];
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
+.react-flow__node {
+  font-family: inherit;
+}
+
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: #253041;
+  border-radius: 999px;
+}
